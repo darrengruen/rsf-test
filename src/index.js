@@ -1,6 +1,5 @@
 import { applyMiddleware, createStore } from 'redux'
 import createLogger from 'redux-logger'
-import createDebounce from 'redux-debounce'
 import thunkMiddleware from 'redux-thunk'
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -9,14 +8,12 @@ import './index.css';
 import rootReducer from './rootReducer'
 import { Actions } from './subreddit'
 
-const debouncer = createDebounce({ simple: 500 })
 const loggerMiddleware = createLogger();
 
 const store = createStore(
     rootReducer,
     applyMiddleware(
         thunkMiddleware,
-        debouncer,
         loggerMiddleware,
     )
 )
