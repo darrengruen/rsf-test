@@ -1,6 +1,12 @@
 import * as C from './constants'
 
-export const request = subreddit => ({ type: C.REQUEST, selected: subreddit })
+export const request = subreddit => ({
+    meta: {
+        debounce: 'simple'
+    },
+    type: C.REQUEST,
+    selected: subreddit
+})
 export const receive = (selected, json) => ({
     type: C.RECEIVE,
     selected,
