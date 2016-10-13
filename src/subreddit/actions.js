@@ -12,7 +12,7 @@ export const receive = (selected, json) => ({
     receivedAt: Date.now(),
 })
 
-export const fetchPosts = (subreddit) => {
+const realFetchPosts = (subreddit) => {
     // Wrapping the function that is returned
     // with a debounce only delays ALL the function
     // calls for the specified time
@@ -26,6 +26,8 @@ export const fetchPosts = (subreddit) => {
             .then(json => dispatch(receive(subreddit, json)))
     }
 }
+
+export const fetchPosts = (subreddit) => debounce(realFetchPosts(subreddit))
 
 export const select = (selected) => ({
     type: C.SELECT,
