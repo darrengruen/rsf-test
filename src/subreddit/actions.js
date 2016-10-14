@@ -1,10 +1,14 @@
+import { actions } from '../cache'
 import debounce from 'lodash/debounce'
 import * as C from './constants'
+
+console.info(actions)
 
 export const request = subreddit => ({
     type: C.REQUEST,
     selected: subreddit
 })
+
 export const receive = (selected, json) => ({
     type: C.RECEIVE,
     selected,
@@ -12,24 +16,16 @@ export const receive = (selected, json) => ({
     receivedAt: Date.now(),
 })
 
-const realFetchPosts = (subreddit) => {
-    // Wrapping the function that is returned
-    // with a debounce only delays ALL the function
-    // calls for the specified time
+export const fetchPosts = sub => debounce(((sub) => {
     return (dispatch) => {
-
-        dispatch(request(subreddit))
-        // wrapping the fetch call with debounce will not work
-        // It does not return a function which redux is expecting
-        return fetch(`http://www.reddit.com/r/${subreddit}.json`)
+        dispatch(request(sub))
+        return fetch(`http://www.reddit.com/r/${sub}.json`)
             .then(response => response.json())
-            .then(json => dispatch(receive(subreddit, json)))
+            .then(json => {
+                dispatch(receive(sub, json))
+                dispatch(actions.update(sub, json.data.children.map(child => child.data)))
+            })
     }
-}
+})(sub), 500)
 
-export const fetchPosts = (subreddit) => debounce(realFetchPosts(subreddit))
-
-export const select = (selected) => ({
-    type: C.SELECT,
-    selected,
-})
+export const select = (selected) => ({ type: C.SELECT, selected })
